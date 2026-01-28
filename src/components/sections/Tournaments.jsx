@@ -1,4 +1,4 @@
-import { useId, useRef } from "react";
+import { useId } from "react";
 import Container from "../layout/Container";
 import { tournamentsContent } from "../data/home";
 import { img } from "../../utils/assets";
@@ -12,8 +12,6 @@ function safeImg(file) {
 }
 
 function NotchBattleCardSVG({ idBase, battleBg }) {
-  // ViewBox: 1000 x 340
-  // Notch: top dip + bottom dip (center)
   const d =
     "M 70 28 " +
     "H 380 " +
@@ -47,7 +45,6 @@ function NotchBattleCardSVG({ idBase, battleBg }) {
       aria-hidden="true"
     >
       <defs>
-        {/* Optional image fill */}
         {battleBg ? (
           <pattern
             id={patternId}
@@ -64,21 +61,18 @@ function NotchBattleCardSVG({ idBase, battleBg }) {
           </pattern>
         ) : null}
 
-        {/* Base fill gradient (fallback / blend) */}
         <linearGradient id={fillGradId} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="rgba(0,0,0,0.70)" />
           <stop offset="0.55" stopColor="rgba(0,0,0,0.40)" />
           <stop offset="1" stopColor="rgba(0,0,0,0.75)" />
         </linearGradient>
 
-        {/* Dark shading overlay */}
         <linearGradient id={shadeGradId} x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stopColor="rgba(0,0,0,0.75)" />
           <stop offset="0.5" stopColor="rgba(0,0,0,0.25)" />
           <stop offset="1" stopColor="rgba(0,0,0,0.75)" />
         </linearGradient>
 
-        {/* Glow filter for border */}
         <filter id={glowId} x="-40%" y="-40%" width="180%" height="180%">
           <feGaussianBlur stdDeviation="6" result="blur" />
           <feMerge>
@@ -88,17 +82,14 @@ function NotchBattleCardSVG({ idBase, battleBg }) {
         </filter>
       </defs>
 
-      {/* Shape fill */}
       <path
         d={d}
         fill={battleBg ? `url(#${patternId})` : `url(#${fillGradId})`}
         opacity={battleBg ? 0.85 : 1}
       />
 
-      {/* Shade overlay to match Figma readability */}
       <path d={d} fill={`url(#${shadeGradId})`} opacity="1" />
 
-      {/* Glow stroke (soft) */}
       <path
         d={d}
         fill="none"
@@ -107,41 +98,27 @@ function NotchBattleCardSVG({ idBase, battleBg }) {
         filter={`url(#${glowId})`}
       />
 
-      {/* Main thin stroke (crisp) */}
-      <path
-        d={d}
-        fill="none"
-        stroke="rgb(var(--color-brand))"
-        strokeWidth="3"
-      />
+      <path d={d} fill="none" stroke="rgb(var(--color-brand))" strokeWidth="3" />
     </svg>
   );
 }
 
 export default function Tournaments() {
-  const rowRef = useRef(null);
   const reactId = useId();
   const idBase = `battle-${String(reactId).replace(/[:]/g, "")}`;
 
-  const sectionBg = safeImg(tournamentsContent.bgImage); // ✅ tournaments section bg
+  const sectionBg = safeImg(tournamentsContent.bgImage);
   const battleBg = safeImg(tournamentsContent.battleCard?.bgImage);
   const leftChar = safeImg(tournamentsContent.battleCard?.leftChar);
   const rightChar = safeImg(tournamentsContent.battleCard?.rightChar);
   const buyArrow = safeImg(tournamentsContent.arrow);
 
-  const scrollRow = (dir = 1) => {
-    const el = rowRef.current;
-    if (!el) return;
-
-    const card = el.querySelector("[data-smallcard]");
-    const step = card ? card.getBoundingClientRect().width + 16 : 260;
-    el.scrollBy({ left: dir * step, behavior: "smooth" });
-  };
+  const games = (tournamentsContent.games ?? []).slice(0, 6);
 
   return (
     <section id="tournaments" className="relative overflow-hidden">
-      {/* ✅ SECTION BG IMAGE (Figma feel) */}
-      <div className="absolute inset-0 -z-10">
+      {/* BG */}
+      <div className="absolute inset-0 -z-10 mt-7">
         {sectionBg ? (
           <img
             src={sectionBg}
@@ -150,127 +127,113 @@ export default function Tournaments() {
             loading="lazy"
           />
         ) : null}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-black/35 to-black/55" />
+        <div className="absolute inset-0 bg-gradient-to-b " />
         <div className="absolute inset-0 bg-[radial-gradient(900px_380px_at_50%_0%,rgba(255,123,0,0.08),transparent_60%)]" />
       </div>
 
       <Container className="pt-10 pb-12 lg:pt-12 lg:pb-14">
-        {/* ✅ NO OUTER WRAPPER BOX (removed) */}
-
-        {/* title */}
+        {/* ✅ Title (orange dot removed) */}
         <div className="text-center">
-          <div className="mx-auto mb-2 h-2 w-2 rounded-full bg-brand" />
           <h2 className="text-2xl sm:text-3xl font-semibold text-white">
             <span className="text-brand">{tournamentsContent.titleAccent}</span>{" "}
             {tournamentsContent.titleRest}
           </h2>
         </div>
 
-        {/* top mini-cards row */}
+        {/* ✅ Cards row + arrows (no overlap like figma) */}
         <div className="relative mt-6">
-          {/* arrows */}
+          {/* Arrows */}
           <button
             type="button"
-            onClick={() => scrollRow(-1)}
-            className="hidden sm:flex absolute -left-2 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-xl bg-black/35 ring-1 ring-white/10 hover:bg-black/55 transition items-center justify-center"
-            aria-label="Scroll left"
+            className="hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 h-11 w-11 rounded-xl bg-white/[0.04] ring-1 ring-white/10 hover:bg-white/[0.07] transition items-center justify-center"
+            aria-hidden="true"
+            tabIndex={-1}
           >
-            <span className="text-white/80 text-xl">‹</span>
+            <span className="text-white/80 text-2xl leading-none">‹</span>
           </button>
 
           <button
             type="button"
-            onClick={() => scrollRow(1)}
-            className="hidden sm:flex absolute -right-2 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-xl bg-black/35 ring-1 ring-white/10 hover:bg-black/55 transition items-center justify-center"
-            aria-label="Scroll right"
+            className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 h-11 w-11 rounded-xl bg-white/[0.04] ring-1 ring-white/10 hover:bg-white/[0.07] transition items-center justify-center"
+            aria-hidden="true"
+            tabIndex={-1}
           >
-            <span className="text-white/80 text-xl">›</span>
+            <span className="text-white/80 text-2xl leading-none">›</span>
           </button>
 
-          <div
-            ref={rowRef}
-            className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory px-2
-                       [scrollbar-width:none] [-ms-overflow-style:none]
-                       [&::-webkit-scrollbar]:hidden"
-          >
-            {(tournamentsContent.games ?? []).map((g) => {
+          {/* ✅ grid gets side padding on lg so arrows never sit on cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 px-2 lg:px-16">
+            {games.map((g) => {
               const poster = safeImg(g.image);
 
               return (
-                <div
+                <article
                   key={g.title}
-                  data-smallcard
-                  className="snap-start min-w-[150px] sm:min-w-[160px] lg:min-w-[170px]"
+                  className="rounded-2xl overflow-hidden ring-1 ring-white/10"
                 >
-                  <div className="rounded-2xl overflow-hidden bg-black/25 ring-1 ring-white/10">
-                    {poster ? (
-                      <img
-                        src={poster}
-                        alt={g.title}
-                        className="h-[160px] w-full object-cover"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="h-[160px] w-full bg-white/10" />
-                    )}
+                  {poster ? (
+                    <img
+                      src={poster}
+                      alt={g.title}
+                      className="h-[160px] w-full object-cover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="h-[160px] w-full bg-white/10" />
+                  )}
 
-                    <div className="px-3 py-2 flex justify-start flex-col gap-3">
-                      <p className="text-xs text-white/85 truncate">
-                        {g.title}
-                      </p>
+                  <div className="px-3 py-2 flex justify-start flex-col gap-3">
+                    <p className="text-xs text-white/85 truncate">{g.title}</p>
 
-                      <button
-                        type="button"
-                        className="inline-flex items-center gap-2 text-xs text-white/70 hover:text-white transition"
-                      >
-                        <span>Buy Now</span>
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-2 text-xs text-white/70 hover:text-white transition"
+                    >
+                      <span>Buy Now</span>
 
-                        {buyArrow ? (
-                          <img
-                            src={buyArrow}
-                            alt=""
-                            className="h-3 w-3 opacity-90"
-                            loading="lazy"
-                          />
-                        ) : (
-                          <span className="text-brand text-lg leading-none">
-                            ›
-                          </span>
-                        )}
-                      </button>
-                    </div>
+                      {buyArrow ? (
+                        <img
+                          src={buyArrow}
+                          alt=""
+                          className="h-3 w-3 opacity-90"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <span className="text-brand text-lg leading-none">›</span>
+                      )}
+                    </button>
                   </div>
-                </div>
+                </article>
               );
             })}
           </div>
         </div>
 
-        {/* ✅ Battle card (NOTCH border + no cutting) */}
+        {/* ✅ Battle card (narrower width + characters bigger + overflow like figma) */}
         <div className="mt-7 relative overflow-visible">
-          <div className="relative w-full min-h-[260px] sm:min-h-[300px] lg:min-h-[340px]">
-            {/* notch shape bg + border */}
+          {/* ✅ width reduced + centered */}
+          <div className="relative mx-auto w-full max-w-[1120px] min-h-[220px] sm:min-h-[250px] lg:min-h-[280px]">
             <NotchBattleCardSVG idBase={idBase} battleBg={battleBg} />
 
             {/* content overlay */}
             <div className="absolute inset-0 flex items-center">
               <div className="w-full px-6 sm:px-10 lg:px-12">
-                <div className="grid gap-6 md:grid-cols-[1fr_1.3fr_1fr] md:items-center">
-                  {/* left character */}
-                  <div className="hidden md:block">
+                <div className="grid gap-6 md:grid-cols-[1fr_1.35fr_1fr] md:items-center">
+                  {/* ✅ left character (bigger + pushed out) */}
+                  <div className="hidden md:block overflow-visible">
                     {leftChar ? (
                       <img
                         src={leftChar}
                         alt=""
-                        className="h-[220px] lg:h-[260px] w-full object-contain"
+                        className="h-[210px] lg:h-[255px] w-full object-contain md:-translate-x-6 lg:-translate-x-10"
                         loading="lazy"
                       />
                     ) : (
-                      <div className="h-[220px] w-full rounded-2xl bg-white/5" />
+                      <div className="h-[210px] w-full rounded-2xl bg-white/5" />
                     )}
                   </div>
 
-                  {/* center text */}
+                  {/* center text צור */}
                   <div className="text-center">
                     <h3 className="text-xl sm:text-2xl font-semibold text-white">
                       {tournamentsContent.battleCard?.title}{" "}
@@ -290,17 +253,17 @@ export default function Tournaments() {
                     </div>
                   </div>
 
-                  {/* right character */}
-                  <div className="hidden md:block">
+                  {/* ✅ right character (bigger + pushed out) */}
+                  <div className="hidden md:block overflow-visible">
                     {rightChar ? (
                       <img
                         src={rightChar}
                         alt=""
-                        className="h-[220px] lg:h-[260px] w-full object-contain"
+                        className="h-[210px] lg:h-[255px] w-full object-contain md:translate-x-6 lg:translate-x-10"
                         loading="lazy"
                       />
                     ) : (
-                      <div className="h-[220px] w-full rounded-2xl bg-white/5" />
+                      <div className="h-[210px] w-full rounded-2xl bg-white/5" />
                     )}
                   </div>
                 </div>

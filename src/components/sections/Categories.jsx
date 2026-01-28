@@ -37,7 +37,7 @@ export default function Categories() {
   const c = categories;
 
   return (
-    <section className="pb-10">
+    <section className="pb-10lg:pb-14 lg:mt-20">
       <Container>
         {/* Grid like Figma (12 columns on lg) */}
         <div className="grid gap-4 lg:grid-cols-12">

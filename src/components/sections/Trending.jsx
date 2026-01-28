@@ -1,9 +1,11 @@
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import Container from "../layout/Container";
 import { trendingContent } from "../data/home";
 import { img } from "../../utils/assets";
 
-// small helper: if img() throws or returns undefined, UI still works
+// ✅ View All arrow icon (adjust extension if needed)
+import arrowIcon from "../../assets/icons/arrowicon.png";
+
 function safeImg(file) {
   try {
     return file ? img(file) : "";
@@ -14,99 +16,77 @@ function safeImg(file) {
 
 function StarRow({ rating = 0 }) {
   const full = Math.floor(rating);
-  const half = rating - full >= 0.5;
 
   return (
     <div className="flex items-center gap-1">
-      {[0, 1, 2, 3, 4].map((i) => {
-        const filled = i < full || (i === full && half);
-        return (
-          <svg
-            key={i}
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            className={filled ? "text-brand" : "text-white/25"}
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path d="M12 17.3l-6.2 3.7 1.7-7.1L2 9.2l7.3-.6L12 2l2.7 6.6 7.3.6-5.5 4.7 1.7 7.1z" />
-          </svg>
-        );
-      })}
+      {[0, 1, 2, 3, 4].map((i) => (
+        <svg
+          key={i}
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          className={i < full ? "text-brand" : "text-white/25"}
+          fill="currentColor"
+        >
+          <path d="M12 17.3l-6.2 3.7 1.7-7.1L2 9.2l7.3-.6L12 2l2.7 6.6 7.3.6-5.5 4.7 1.7 7.1z" />
+        </svg>
+      ))}
       <span className="ml-2 text-xs text-white/55">{rating.toFixed(1)}</span>
     </div>
   );
 }
 
 export default function Trending() {
-  const trackRef = useRef(null);
-
   const games = useMemo(() => trendingContent.games ?? [], []);
-
-  const scrollByCards = (dir = 1) => {
-    const el = trackRef.current;
-    if (!el) return;
-
-    // scroll about one card width
-    const card = el.querySelector("[data-card]");
-    const step = card ? card.getBoundingClientRect().width + 16 : 360;
-    el.scrollBy({ left: dir * step, behavior: "smooth" });
-  };
 
   return (
     <section id="trending" className="relative">
-      <Container className="pt-8 pb-10 lg:pt-10 lg:pb-12">
-        {/* header */}
-        <div className="flex items-center justify-start gap-6">
-          <h2 className="text-base sm:text-lg font-semibold text-white">
+      <Container className="pt-8 pb-12 mt-6 lg:pb-8">
+        {/* Header */}
+        <div className="flex items-center gap-6">
+          <h2 className="text-lg font-semibold text-white">
             {trendingContent.title}
           </h2>
 
-          <button className="text-xs sm:text-sm text-brand hover:opacity-90 transition">
-            {trendingContent.viewAll} <span aria-hidden="true">›</span>
+          {/* ✅ View All with custom icon */}
+          <button className="flex items-center gap-2 text-sm text-brand hover:opacity-90 transition">
+            <span>{trendingContent.viewAll}</span>
+            <img src={arrowIcon} alt="" className="h-4 w-4" />
           </button>
         </div>
 
-        {/* slider wrapper */}
-        <div className="relative mt-5 rounded-2xl bg-white/[0.03] ring-1 ring-white/10 p-4 sm:p-5 shadow-soft">
-          {/* arrows (desktop) */}
+        {/* No outer wrapper (as per figma) */}
+        <div className="relative mt-5">
+          {/* Left Arrow (no box) */}
           <button
             type="button"
-            onClick={() => scrollByCards(-1)}
-            className="hidden lg:flex absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 items-center justify-center rounded-xl bg-black/40 ring-1 ring-white/10 hover:bg-black/55 transition"
-            aria-label="Scroll left"
+            className="hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 px-2 py-2 text-3xl text-white/60 hover:text-white transition"
+            aria-label="Previous"
           >
-            <span className="text-white/80 text-xl">‹</span>
+            ‹
           </button>
 
+          {/* Right Arrow (no box) */}
           <button
             type="button"
-            onClick={() => scrollByCards(1)}
-            className="hidden lg:flex absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 items-center justify-center rounded-xl bg-black/40 ring-1 ring-white/10 hover:bg-black/55 transition"
-            aria-label="Scroll right"
+            className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 px-2 py-2 text-3xl text-white/60 hover:text-white transition"
+            aria-label="Next"
           >
-            <span className="text-white/80 text-xl">›</span>
+            ›
           </button>
 
-          {/* cards row */}
-          <div
-            ref={trackRef}
-            className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2
-                       [scrollbar-width:none] [-ms-overflow-style:none]
-                       [&::-webkit-scrollbar]:hidden"
-          >
-            {games.map((g) => {
-              const poster = safeImg(g.image);
+          <div className="lg:px-10">
+            {/* GRID – 5 cards visible */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              {games.map((g) => {
+                const poster = safeImg(g.image);
 
-              return (
-                <article
-                  key={g.title}
-                  data-card
-                  className="snap-start min-w-[220px] sm:min-w-[240px] lg:min-w-[250px]"
-                >
-                  <div className="rounded-2xl bg-black/25 ring-1 ring-white/10 overflow-hidden">
-                    {/* image */}
+                return (
+                  <article
+                    key={g.title}
+                    className="rounded-2xl bg-black/25 ring-1 ring-white/10 overflow-hidden"
+                  >
+                    {/* Image */}
                     <div className="relative">
                       {poster ? (
                         <img
@@ -119,15 +99,14 @@ export default function Trending() {
                         <div className="h-[170px] w-full bg-white/10" />
                       )}
 
-                      {/* badge (top-left) */}
-                      {g.badge ? (
-                        <div className="absolute left-3 top-3 rounded-lg bg-brand px-2 py-1 text-[10px] font-semibold text-black">
+                      {g.badge && (
+                        <span className="absolute left-3 top-3 rounded-lg bg-brand px-2 py-1 text-[10px] font-semibold text-black">
                           {g.badge}%
-                        </div>
-                      ) : null}
+                        </span>
+                      )}
                     </div>
 
-                    {/* content */}
+                    {/* Content */}
                     <div className="p-3">
                       <h3 className="text-sm font-semibold text-white truncate">
                         {g.title}
@@ -140,27 +119,34 @@ export default function Trending() {
                         </span>
                       </div>
 
+                      {/* ✅ Buttons updated to match figma (same size + orange border on Add) */}
                       <div className="mt-3 flex gap-2">
-                        <button className="btn-outline flex-1 py-2 text-xs">
+                        <button
+                          className="flex-1 h-10 rounded-xl border border-brand bg-black/20 text-xs font-semibold text-white/80 hover:bg-black/30 transition"
+                        >
                           Add to Cart
                         </button>
-                        <button className="btn-primary flex-1 py-2 text-xs">
+
+                        <button
+                          className="flex-1 h-10 rounded-xl bg-brand text-xs font-semibold text-black hover:opacity-90 transition"
+                        >
                           Buy Now
                         </button>
                       </div>
                     </div>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
+                  </article>
+                );
+              })}
+            </div>
 
-          {/* dots (simple visual like figma) */}
-          <div className="mt-4 flex items-center justify-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-brand" />
-            <span className="h-2 w-2 rounded-full bg-white/20" />
-            <span className="h-2 w-2 rounded-full bg-white/20" />
-            <span className="h-2 w-2 rounded-full bg-white/20" />
+            {/* Bottom dots (visual only) */}
+            <div className="mt-5 flex justify-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-brand" />
+              <span className="h-2 w-2 rounded-full bg-white/20" />
+              <span className="h-2 w-2 rounded-full bg-white/20" />
+              <span className="h-2 w-2 rounded-full bg-white/20" />
+              <span className="h-2 w-2 rounded-full bg-white/20" />
+            </div>
           </div>
         </div>
       </Container>

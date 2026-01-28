@@ -27,7 +27,7 @@ export default function Hero() {
       {/* ✅ extra soft overlay (NOT black) */}
       <div className="absolute " />
 
-      <Container className="pt-10 pb-10 lg:pt-14 lg:pb-14">
+      <Container className="pt-10 mt-10 pb-10 lg:pt-14 lg:pb-14">
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
           {/* Left */}
           <div>

@@ -5,6 +5,10 @@ import Trending from "../components/sections/Trending.jsx";
 import Tournaments from "../components/sections/Tournaments.jsx";
 import Bestsellers from "../components/sections/Bestsellers.jsx";
 import Upcoming from "../components/sections/Upcoming.jsx";
+import EpiDeal from "../components/sections/EpicDeal.jsx";
+import Review from "../components/sections/Review.jsx";
+import Blog from "../components/sections/Blog.jsx";
+import Footer from "../components/layout/Footer.jsx";
 
 export default function Home() {
   return (
@@ -17,6 +21,10 @@ export default function Home() {
       <Tournaments />
       <Bestsellers />
       <Upcoming />
+      <EpiDeal />
+      <Review />
+      <Blog />
+      <Footer />
     </div>
   );
 }

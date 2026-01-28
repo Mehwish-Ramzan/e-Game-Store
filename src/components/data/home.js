@@ -205,5 +205,94 @@ export const upcomingContent = {
       date: "Late 2025",
       tag: "Pre-order",
     },
+    {
+          title: "The Witcher 4",
+          image: "upcoming-5.png",
+          time: "51s",
+          date: "Mid 2026",
+          tag: "Pre-order",
+        },
   ],
+
+};
+
+/* =========================
+   BLOG (NEW)
+========================= */
+export const blogContent = {
+  title: "Blog Post",
+  viewAll: "View All",
+  dots: 5,
+
+  posts: [
+    {
+      id: 1,
+      image: "blog-1.png",
+      featured: true,
+    },
+    {
+      id: 2,
+      image: "blog-2.png",
+      featured: false,
+    },
+    {
+      id: 3,
+      image: "blog-3.png",
+      featured: false,
+    },
+    {
+      id: 4,
+      image: "blog-4.png",
+      featured: false,
+    },
+    {
+      id: 5,
+      image: "blog-5.png",
+      featured: false,
+    },
+  ],
+};
+
+/* =========================
+   FOOTER (NEW)
+========================= */
+export const footerContent = {
+  brand: {
+    name: "EGAME\nSTORE.COM",
+    desc:
+      "Step into the future of gaming with EGame Store. Explore top-tier reviews, news, and in-depth analysis on the latest and greatest games. Join the gaming community now to get exclusive content and features.",
+  },
+
+  social: [
+    { id: "facebook", href: "#" },
+    { id: "instagram", href: "#" },
+    { id: "x", href: "#" },
+    { id: "youtube", href: "#" },
+  ],
+
+  columns: [
+    {
+      title: "Quick Links",
+      links: ["Home", "Gift Cards", "Deals", "Blog"],
+    },
+    {
+      title: "Resources",
+      links: ["Trending Games", "Upcoming Games", "Reviews", "FAQ"],
+    },
+    {
+      title: "Explore",
+      links: ["PC Games", "PlayStation", "Nintendo", "Xbox"],
+    },
+  ],
+
+  contact: {
+    title: "Contact Us",
+    items: [
+      { type: "pin", value: "0000000000" },
+      { type: "phone", value: "0000000000" },
+      { type: "mail", value: "Egamestore@Gmail.Com" },
+    ],
+  },
+
+  copyright: "© 2025 EGameStore.Com - All Rights Reserved.",
 };
